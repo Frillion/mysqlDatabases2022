@@ -45,4 +45,16 @@ delete from restrictors
 where restrictors.courseNumber = old.coursenumber;
 end$$
 
+drop function if exists course_count$$
+create function course_count(first_semester bool) returns int deterministic
+begin
+	declare cour_count int;
+    if first_semester
+    then select count(courseNumber) into cour_count from trackcourses where semester = 1;  
+    return cour_count;
+    end if;
+    select count(courseNumber) into cour_count from trackcourses;
+    return cour_count;
+end$$
+
 
