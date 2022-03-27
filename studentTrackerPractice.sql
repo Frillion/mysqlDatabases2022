@@ -92,5 +92,3 @@ begin
     inner join schools sc on sc.schoolID = d.schoolID
     where r.semesterID = semester_id;
 end$$
-
-call get_student_details_semester(17)$$

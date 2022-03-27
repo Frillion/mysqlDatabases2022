@@ -1,7 +1,7 @@
 use studytracker
 delimiter $$
-drop trigger if exists check_student_status$$
-create trigger check_student_status 
+drop trigger if exists check_student_status_insert$$
+create trigger check_student_status_insert
 before insert on registration
 for each row
 begin
@@ -10,5 +10,53 @@ begin
 		then set msg = 'Student is not registered as an attendee in the studentstatus table';
 		signal sqlstate '45000' set message_text = msg;
 	end if;
-end
+end$$
+
+drop trigger if exists check_student_status_update$$
+create trigger check_student_status_update
+before update on registration
+for each row
+begin
+	declare msg varchar(128);
+	if !(select StudentStatus(new.studentID) in (select 1,8,7))
+		then set msg = 'Student is not registered as an attendee in the studentstatus table';
+		signal sqlstate '45000' set message_text = msg;
+	end if;
+end$$
+
+drop procedure if exists get_finished_course_credits$$
+create procedure get_finished_course_credits(student_id int)
+begin
+select concat(stud.firstName,stud.lastName) as FullName,tra.trackName,sum(cou.courseCredits) as FinishedCredits
+from students stud
+join registration reg on stud.studentID = reg.StudentID
+join tracks tra on stud.trackID = tra.trackID
+join courses cou on reg.courseNumber = cou.courseNumber
+where stud.studentID = student_id and reg.grade >= 5.0;
+end$$
+
+drop procedure if exists get_finished_course_creditsAll$$
+create procedure get_finished_course_creditsAll()
+begin
+select concat(stud.firstName,stud.lastName) as FullName,tra.trackName,sum(cou.courseCredits) as FinishedCredits
+from students stud
+join registration reg on stud.studentID = reg.StudentID
+join tracks tra on stud.trackID = tra.trackID
+join courses cou on reg.courseNumber = cou.courseNumber
+where reg.grade >= 5.0
+group by stud.studentID;
+end$$
+
+drop procedure if exists add_manditory_courses$$
+create procedure add_manditory_courses()
+begin
+
+end$$
+
+drop procedure if exists add_new_student$$
+create procedure add_new_student()
+begin
+
+end$$
+
 
