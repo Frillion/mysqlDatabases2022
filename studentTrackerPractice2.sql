@@ -47,7 +47,6 @@ where reg.grade >= 5.0
 group by stud.studentID;
 end$$
 
-
 drop procedure if exists add_manditory_courses$$
 create procedure add_manditory_courses(student_id int,track_id int,semester_id int)
 begin
