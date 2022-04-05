@@ -34,19 +34,50 @@ class DbManager:
 
 
     def single_course(self, course_number):
+        course = {
+            "course_number": course_number
+        }
+        param = [json.dumps(course,ensure_ascii=False)]
+        response = self.execute_sql_procedure('get_course_json',param)
+        try:
+            return json.loads(response[0][0])
+        except IndexError:
+            return response
         pass
 
 
-    def update_course(self, course_number, course_name, course_credits):
+    def update_course(self, course_number, course_name = None, course_credits=None):
+        course={
+            "course_number":course_number,
+            "course_name":course_name,
+            "course_credits":course_credits
+        }
+        params = [json.dumps(course,ensure_ascii=False)]
+        response = self.execute_sql_procedure('update_course_json',params)
+        return json.loads(response[0][0])
         pass
 
 
     def delete_course(self, course_number):
+        course={
+            'course_number':course_number
+        }
+        param = [json.dumps(course, ensure_ascii=False)]
+        response = self.execute_sql_procedure('delete_course_json', param)
+        return json.loads(response[0][0])
         pass
 
 
     # ---------------------------------------------------------------------------------------
     def add_track_course(self, course_number, semester_id, is_mandatory):
+        course = {
+            "course_number":course_number,
+            "semester_id":semester_id,
+            "is_mandatory":is_mandatory
+        }
+        param = [json.dumps(course, ensure_ascii=False)]
+        response = self.execute_sql_procedure('add_track_course_json', param)
+        return json.loads(response[0][0])
         pass
 
 
