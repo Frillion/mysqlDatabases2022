@@ -1,0 +1,66 @@
+TRACK COURSES
+---------------------------------------------------------------------------------------
+#incoming data
+track_id
+course_number
+semester_id
+is_mandatory
+---------------------------------------------------------------------------------------
+if the track_id+course_number is not in the trackcourses table
+	if the courseNumber is in the courses table
+		add the new entry to the table
+send the number of added rows back
+
+----------------------------------------------------------------------------------
+old update clause, not worth updating
+
+if the course_number is in the courses table 
+	if the is_mandatory is empty
+		update the trackcourses table with semester_id
+		where trackID = track_id and courseNumber = course_number
+	else if semester_id is empty
+		update the trackcourses table with is_mandatory
+		where trackID = track_id and courseNumber = course_number
+	else
+		update the trackcourses table with semester_id, is_mandatory
+		where trackID = track_id and courseNumber = course_number
+send the number of updated rows back
+
+----------------------------------------------------------------------------------------
+
+delete the row of the trackcourses table 
+where courseNumber +  trackID = course_number + track_id
+
+-------------------------------------------------------------------------------------
+
+SEMESTERS
+
+-------------------------------------------------------------------------------
+#incoming data
+semester_id
+semester_name
+semester_start
+semester_end
+academic_year
+---------------------------------------------------------------
+
+add the new entry into the semesters table
+send the number of rows added back
+
+------------------------------------------------------------------------------------------
+
+send all data(json_object) of a semester
+where semesterID = semester_id
+
+-----------------------------------------------------------------------------------------
+updated update clause
+
+update the semester table
+with semester_name(if its not null),semester_start(if its not null),semester_end(if its not null),academic_year(if its not null)
+where semesterID = semester_id
+send the number of updated rows back
+
+-----------------------------------------------------------------------------------------------------------
+
+delete a row in the semester table
+where semesterID = semester_id
