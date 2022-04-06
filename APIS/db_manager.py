@@ -1,8 +1,6 @@
 import json
 from mysql.connector import connect
 from mysql.connector import Error
-from config import *
-import _mysql_connector
 
 class DbManager:
     def __init__(self):
