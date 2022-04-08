@@ -24,7 +24,7 @@ def check_status():
     print(manager.status)
 
 def not_valid():
-    print(command +' is not a recognized command')
+    print('That is not a recognized command')
 
 def abort():
     raise SystemExit
@@ -32,7 +32,6 @@ def abort():
 if __name__ == '__main__':
 
     manager = db_manager.DbManager()
-    results = None
     command = ''
     mode = ''
     main_menu = {
@@ -61,7 +60,6 @@ if __name__ == '__main__':
     }
 
     while True:
-        #Root Mode
         print('Type A Command Into The Prompt, Commands Are Separated By Spaces One Primary, One Secondary And Parameters\n'
               'Parameters That Have "Can Be None" Are Optional To Leave Those Unchanged Type None Into That Field\n')
         print_menu(main_menu)
@@ -71,22 +69,26 @@ if __name__ == '__main__':
         mode = main_menu.get(command[0],[None,not_valid])[1]
         if not isinstance(mode,types.FunctionType):
             try:
-                if len(signature(mode[command[1]][1]).parameters) == 1:
-                    mode = main_menu.get(command[0], [None,not_valid])[1][command[1]][1](command[2])
+                if len(signature(mode.get(command[1])[1]).parameters) == 1:
+                    mode = mode.get(command[1])[1](command[2])
                     print(mode)
-                elif len(signature(mode[command[1]][1]).parameters) == 2:
-                    mode = main_menu.get(command[0], [None, not_valid])[1][command[1]][1](command[2],command[3])
+                elif len(signature(mode.get(command[1])[1]).parameters) == 2:
+                    mode = mode.get(command[1])[1](command[2],command[3])
                     print(mode)
                 elif len(signature(mode[command[1]][1]).parameters) == 3:
-                    mode = main_menu.get(command[0], [None, not_valid])[1][command[1]][1](command[2],command[3],command[4])
+                    mode = mode.get(command[1])[1](command[2],command[3],command[4])
                     print(mode)
                 elif len(signature(mode[command[1]][1]).parameters) == 4:
-                    mode = main_menu.get(command[0], [None, not_valid])[1][command[1]][1](command[2],command[3],command[4],command[5])
+                    mode = mode.get(command[1])[1](command[2],command[3],command[4],command[5])
                     print(mode)
                 else:
-                    mode = main_menu.get(command[0], [None, not_valid])[1][command[1]][1](command[2], command[3], command[4],command[5],command[6])
+                    mode = mode.get(command[1])[1](command[2], command[3], command[4],command[5],command[6])
                     print(mode)
             except SyntaxError as e:
-                print("Unexpected Error Has Occurred With The Command Syntax",e)
+                print("Unexpected Error Has Occurred With The Command Syntax:",e)
+            except KeyError as e:
+                print("No Command Was Found Of That Name:",e)
+            except TypeError as e:
+                print("Whoops seems like something went wrong please try again:",e)
         else:
             mode = main_menu.get(command[0], [None, not_valid])[1]()
