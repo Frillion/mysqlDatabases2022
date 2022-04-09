@@ -1,6 +1,7 @@
 import db_manager
 import types
 from inspect import signature
+import time
 
 def replace(re,wit,lst):
     for i in range(len(lst)):
@@ -10,6 +11,11 @@ def replace(re,wit,lst):
 def reset_mode():
     global mode
     mode = ''
+def print_json_result(result):
+    for key in result.keys():
+        print(key,' : ',result[key])
+        time.sleep(1)
+    print()
 
 def print_menu(menu):
     print("Command List:")
@@ -62,6 +68,7 @@ if __name__ == '__main__':
     while True:
         print('Type A Command Into The Prompt, Commands Are Separated By Spaces One Primary, One Secondary And Parameters\n'
               'Parameters That Have "Can Be None" Are Optional To Leave Those Unchanged Type None Into That Field\n')
+        time.sleep(2)
         print_menu(main_menu)
         command = input('Selection>: ')
         command = command.split()
@@ -71,19 +78,19 @@ if __name__ == '__main__':
             try:
                 if len(signature(mode.get(command[1])[1]).parameters) == 1:
                     mode = mode.get(command[1])[1](command[2])
-                    print(mode)
+                    print_json_result(mode)
                 elif len(signature(mode.get(command[1])[1]).parameters) == 2:
                     mode = mode.get(command[1])[1](command[2],command[3])
-                    print(mode)
+                    print_json_result(mode)
                 elif len(signature(mode[command[1]][1]).parameters) == 3:
                     mode = mode.get(command[1])[1](command[2],command[3],command[4])
-                    print(mode)
+                    print_json_result(mode)
                 elif len(signature(mode[command[1]][1]).parameters) == 4:
                     mode = mode.get(command[1])[1](command[2],command[3],command[4],command[5])
-                    print(mode)
+                    print_json_result(mode)
                 else:
                     mode = mode.get(command[1])[1](command[2], command[3], command[4],command[5],command[6])
-                    print(mode)
+                    print_json_result(mode)
             except SyntaxError as e:
                 print("Unexpected Error Has Occurred With The Command Syntax:",e)
             except KeyError as e:

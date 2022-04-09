@@ -2,8 +2,15 @@ use studytracker;
 
 /*Start of all CRUD procedures for Courses*/
 delimiter €€
-drop procedure if exists add_course_json €€
 
+drop function if exists json_null_to_sql_null€€
+create function json_null_to_sql_null(a JSON) returns json deterministic
+begin
+    return if(JSON_TYPE(a) = 'NULL', NULL, a);
+end€€
+SELECT json_null_to_sql_null(JSON_EXTRACT('null', '$'))€€
+
+drop procedure if exists add_course_json €€
 create procedure add_course_json(json_data json)
 begin
 	if not exists(select courseNumber from Courses where courseNumber = json_data->>'$.course_number') then
@@ -24,8 +31,8 @@ drop procedure if exists update_course_json€€
 create procedure update_course_json(json_data json)
 begin
 		update courses
-		set courseName = coalesce(json_data->>'$.course_name',courseName),
-			courseCredits = coalesce(json_data ->>'$.course_credits',courseCredits)
+		set courseName = ifnull((SELECT json_null_to_sql_null(JSON_EXTRACT(json_data, '$.course_name'))),courseName),
+			courseCredits = ifnull((SELECT json_null_to_sql_null(JSON_EXTRACT(json_data, '$.course_credits'))),courseCredits)
 		where courseNumber = json_data ->>'$.course_number';
     
     select json_object('table', 'Courses', 'rows_updated', row_count()) as result;
@@ -70,8 +77,8 @@ begin
 	if exists(select courseNumber from Courses where courseNumber = json_data->>'$.course_number')
     then
 		update trackcourses
-		set semester = coalesce(json_data->>'$.semester_id',semester), 
-			mandatory = coalesce(json_data->>'$.is_mandatory',mandatory)
+		set semester = ifnull((SELECT json_null_to_sql_null(JSON_EXTRACT(json_data, '$.semester_id'))),semester), 
+			mandatory = ifnull((SELECT json_null_to_sql_null(JSON_EXTRACT(json_data, '$.is_mandatory'))),mandatory)
 		where trackID = json_data->>'$.track_id' and courseNumber = json_data->>'$.course_number';
 	end if;
     select json_object('table', 'TrackCourses', 'rows_updated', row_count()) as result;
@@ -110,10 +117,10 @@ drop procedure if exists update_semester_json€€
 create procedure update_semester_json(json_data json)
 begin
 	update semesters
-    set semesterName = coalesce(json_data->>'$.semester_name',semesterName),
-		semesterStarts = coalesce(json_data->>'$.semester_start',semesterStarts),
-		semesterEnds = coalesce(json_data->>'$.semester_ends',semesterEnds),
-        academicYear = coalesce(json_data->>'$.academic_year',academicYear)
+    set semesterName = ifnull((SELECT json_null_to_sql_null(JSON_EXTRACT(json_data, '$.semester_name'))),semesterName),
+		semesterStarts = ifnull((SELECT json_null_to_sql_null(JSON_EXTRACT(json_data, '$.semester_start'))),semesterStarts),
+		semesterEnds = ifnull((SELECT json_null_to_sql_null(JSON_EXTRACT(json_data, '$.semester_end'))),semesterEnds),
+        academicYear = ifnull((SELECT json_null_to_sql_null(JSON_EXTRACT(json_data, '$.academic_year'))),academicYear)
 	where semesterID = json_data->>'$.semester_id';
     select json_object('table', 'Semester', 'rows_updated', row_count()) as result;
 end€€
