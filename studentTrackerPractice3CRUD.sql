@@ -8,7 +8,6 @@ create function json_null_to_sql_null(a JSON) returns json deterministic
 begin
     return if(JSON_TYPE(a) = 'NULL', NULL, a);
 end€€
-SELECT json_null_to_sql_null(JSON_EXTRACT('null', '$'))€€
 
 drop procedure if exists add_course_json €€
 create procedure add_course_json(json_data json)
@@ -42,7 +41,7 @@ drop procedure if exists delete_course_json€€
 create procedure delete_course_json(json_data json)
 begin
 	delete from courses
-	where courseNumber = json_data->>'$.courseNumber';
+	where courseNumber = json_data->>'$.course_number';
     select json_object('table', 'Courses', 'rows_deleted', row_count()) as result;
 end€€
 

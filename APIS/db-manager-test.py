@@ -12,6 +12,11 @@ def reset_mode():
     global mode
     mode = ''
 def print_json_result(result):
+    if len(result) == 0:
+        for i in result:
+            print(i)
+            time.sleep(1)
+        return
     for key in result.keys():
         print(key,' : ',result[key])
         time.sleep(1)
@@ -97,5 +102,7 @@ if __name__ == '__main__':
                 print("No Command Was Found Of That Name:",e)
             except TypeError as e:
                 print("Whoops seems like something went wrong please try again:",e)
+            except IndexError as e:
+                print("No Results Where Returned:",e)
         else:
             mode = main_menu.get(command[0], [None, not_valid])[1]()
