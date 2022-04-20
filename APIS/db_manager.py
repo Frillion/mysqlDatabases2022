@@ -45,6 +45,7 @@ class DbManager:
 
 
     def update_course(self, course_number, course_name = None, course_credits=None):
+        course_credits = int(course_credits)if course_credits else None
         course={
             "course_number":course_number,
             "course_name":course_name,
@@ -95,6 +96,8 @@ class DbManager:
 
 
     def update_track_course(self, track_id, course_number, semester_id=None, is_mandatory=None):
+        semester_id = int(semester_id)if semester_id.isdigit() else None
+        is_mandatory = int(is_mandatory)if is_mandatory.isdigit() else None
         track_course = {
             "track_id":track_id,
             "course_number":course_number,
