@@ -27,10 +27,7 @@ class DbManager:
             "population":""
         }
         with open(file_path,'r',encoding='UTF-8') as csvfile:
-            inserted_regions = 0
-            inserted_cities = 0
-            inserted_population = 0
-            failed_rows = 0
+            row_amount = 0
             csv_reader = csv.DictReader(csvfile)
             for row in csv_reader:
                 try:
@@ -43,20 +40,14 @@ class DbManager:
                     else:
                         json_object['record_date'] = str(list(row.keys())[3]).split("-")[1]
                         json_object["population"] = row[list(row.keys())[3]]
-                    params = json.dumps(json_object,ensure_ascii=False)
-                    try:
-                        response = self.execute_sql_procedure("insert_region", params)
-                        inserted_regions+=json.loads(response[0][0])['rows_inserted']
-                        response = self.execute_sql_procedure("insert_cities", params)
-                        inserted_cities+=json.loads(response[0][0])['rows_inserted']
-                        response = self.execute_sql_procedure("insert_population", params)
-                        inserted_population+=json.loads(response[0][0])['rows_inserted']
-                    except IndexError:
-                        failed_rows += 1
-                    print(json_object)
+                    params = [json.dumps(json_object,ensure_ascii=False)]
+                    response = self.execute_sql_procedure("insert_region", params)
+                    response = self.execute_sql_procedure("insert_cities", params)
+                    response = self.execute_sql_procedure("insert_population", params)
+                    print(json_object,row_amount)
+                    row_amount+=1
                 except ValueError:
                     json_object['region_name'] = row['Sveitarfélagsnúmer']
-            return{"Inserted_Pop":inserted_population,"Inserted_Reg":inserted_regions,"Inserted_city":inserted_cities,"Failed":failed_rows}
 
 
     def execute_sql_function(self, function_name, parameters=None):
@@ -90,7 +81,6 @@ class DbManager:
 
             for result in cursor.stored_results():
                 results = result.fetchall()
-
         except Error as error:
             self.status = error
         finally:
