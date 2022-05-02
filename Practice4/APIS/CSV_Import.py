@@ -36,7 +36,13 @@ class DbManager:
                     index +=1
                 except ValueError:
                     if index > 0:
+                        params = json.dumps(json_object,ensure_ascii=False)
+                        self.execute_sql_procedure("insert_region",params)
+                        self.execute_sql_procedure("insert_cities",params)
+                        self.execute_sql_procedure("insert_json",params)
+                        self.execute_sql_procedure("insert_population",params)
                         print(json_object)
+                        print(self.status)
                         json_object.clear()
                     json_object[row['Sveitarfélagsnúmer']] = []
                     prev_region_id = row['Sveitarfélagsnúmer']

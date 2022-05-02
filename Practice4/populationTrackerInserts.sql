@@ -14,17 +14,15 @@ create procedure insert_json(j_data json)
 begin
 	declare region_id int;
     declare entire_object json;
-    declare city_array json;
-    declare population_array json;
     select RegionID into region_id from regions where regions.RegionName = (select json_extract(json_keys(j_data),'$[0]'));
     select JsonData into entire_object from jsonfiles where RegionID = region_id;
-    select json_extract(entire_object->"$.%"%((select json_extract(json_keys(entire_object),'$[0]'))),'$[%]'%(i)) into city_array;
     if region_id not in (select RegionID from jsonfiles)
 	then insert into jsonfiles(RegionID,JsonData)
 		 values(region_id,j_data);
 	else
 		update jsonfiles
-        set JsonData = (select json_set((entire_object,'$.%.%'%((select json_extract(json_keys(j_data),'$[0]')),))));
+        set JsonData = json_merge_patch(entire_object,j_data)
+        where RegionID = rergion_id;
 	end if;
 end;
 
@@ -34,15 +32,19 @@ begin
 declare data_length int;
 declare region_id int;
 declare city_array json;
+declare json_syntax char(3);
+declare json_array_syntax char(5);
 declare i int;
+set json_syntax = "$.?";
+set json_array_syntax = "$[?]";
 set i = 0;
-select json_length(j_data->"$.%"%((select json_extract(json_keys(j_data),'$[0]')))) into data_length;
+select json_length(json_extract(j_data,replace(json_syntax,'?',(select json_extract(json_keys(j_data),'$[0]'))))) into data_length;
 select RegionID into region_id from regions where regions.RegionName = (select json_extract(json_keys(j_data),'$[0]'));
-select json_extract(j_data->"$.%"%((select json_extract(json_keys(j_data),'$[0]'))),'$[%]'%(i)) into city_array;
     insert_loop: loop
 		if i >= data_length
         then leave insert_loop;
         end if;
+        set city_array =  json_extract(json_extract(j_data,replace(json_syntax,'?',((select json_extract(json_keys(j_data),'$[0]'))))),replace(json_array_syntax,'?',i));
         insert into cities(CityID,RegionID,CityName)
 		values(json_extract(city_array,'$.city_id'),region_id,json_extract(city_array,'$.city_name'));
 		set i = i+1;
@@ -53,8 +55,22 @@ end$$
 drop procedure if exists insert_population$$
 create procedure insert_population(json_data json)
 begin
-	insert into population(RecordDate,CityID,population,JsonData)
-	values(str_to_date(json_data->>"$.record_date","%d/%m/%Y"),json_data->>"$.city_id",json_data->>"$.population",json_data);
+	declare city_array_length int;
+    declare city_index int;
+    declare record json;
+    declare city_id char(4);
+    set city_index = 0;
+	select json_length(json_extract(json_data,'$.%'%(select json_extract(json_keys(j_data),'$[0]')))) into city_array_length;
+    insert_loop:loop
+		if city_index >= city_array_length
+			then leave insert_loop;
+		end if;
+        select json_extract(json_data,'$.%[%].city_id'%((select json_extract(json_keys(j_data),'$[0]'),city_index))) into city_id;
+        select json_extract(json_data,'$.%[%].city_population[0]'%((select json_extract(json_keys(j_data),'$[0]'),city_index))) into record;
+        insert into population(RecordDate,CityID,population)
+        values(str_to_date(json_extract(record,'$.record_date'),'%d/%m/%Y'),city_id,json_extract(record,'$.population'));
+        set city_index = city_index + 1;
+    end loop;
     select json_object('table', 'Population', 'rows_inserted', row_count()) as result;
 end$$
-
+call insert_cities(json_object("ækfædasjfl",json_array(json_object("city_id",'9999',"city_name","hlahnsgv","city_population",json_array(json_object("record_date","20/8/2020","population",132))))));
