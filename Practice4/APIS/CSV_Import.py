@@ -18,36 +18,29 @@ class DbManager:
                 self.status = 'connection failed.'
         except Error as error:
             self.status = error
+
     def insert_entry_from_csv(self,file_path,first_year=True):
-        json_object = {
-            "region_name":"",
-            "city_id":"",
-            "city_name":"",
-            "record_date":"",
-            "population":""
-        }
+        json_object = {}
         with open(file_path,'r',encoding='UTF-8') as csvfile:
-            row_amount = 0
+            prev_region_id = ''
+            index = 0
             csv_reader = csv.DictReader(csvfile)
             for row in csv_reader:
                 try:
                     int_test = int(row['Sveitarfélagsnúmer'])
-                    json_object['city_id']= str(row['Sveitarfélagsnúmer'])
-                    json_object['city_name'] = row['Sveitarfélag']
+                    json_object[prev_region_id].append({'city_id':str(row['Sveitarfélagsnúmer']),'city_name':row['Sveitarfélag'],'city_population':[]})
                     if first_year:
-                        json_object['record_date'] = str(list(row.keys())[2]).split("-")[1]
-                        json_object["population"] = row[list(row.keys())[2]]
+                        json_object[prev_region_id][index]['city_population'].append({'record_date':list(row.keys())[2].split('-')[1],'population':row[list(row.keys())[2]]})
                     else:
-                        json_object['record_date'] = str(list(row.keys())[3]).split("-")[1]
-                        json_object["population"] = row[list(row.keys())[3]]
-                    params = [json.dumps(json_object,ensure_ascii=False)]
-                    response = self.execute_sql_procedure("insert_region", params)
-                    response = self.execute_sql_procedure("insert_cities", params)
-                    response = self.execute_sql_procedure("insert_population", params)
-                    print(json_object,row_amount)
-                    row_amount+=1
+                        json_object[prev_region_id][index]['city_population'].append({'record_date':list(row.keys())[3].split('-')[1],'population':row[list(row.keys())[3]]})
+                    index +=1
                 except ValueError:
-                    json_object['region_name'] = row['Sveitarfélagsnúmer']
+                    if index > 0:
+                        print(json_object)
+                        json_object.clear()
+                    json_object[row['Sveitarfélagsnúmer']] = []
+                    prev_region_id = row['Sveitarfélagsnúmer']
+                    index = 0
 
 
     def execute_sql_function(self, function_name, parameters=None):

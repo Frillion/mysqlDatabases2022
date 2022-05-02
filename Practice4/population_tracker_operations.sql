@@ -8,5 +8,3 @@ begin
     join regions r on c.RegionID = r.RegionID
     where CityName = city_name;
 end;
-
-call get_city_details('Reykjavík')

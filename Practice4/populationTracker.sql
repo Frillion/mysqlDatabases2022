@@ -8,6 +8,13 @@ create table regions(
     primary key(RegionID)
 );
 
+create table JsonFiles(
+	JsonData json,
+    RegionID int,
+    constraint Json_Region_key foreign key(RegionID) 
+    references Regions(RegionID)
+);
+
 drop table if exists cities;
 create table cities(
 	CityID char(4),
@@ -23,7 +30,6 @@ create table population(
 	RecordDate date,
     CityID char(4),
     population int,
-    JsonData Json,
     primary key(RecordDate,CityID),
     constraint city_key foreign key(CityID)
     references cities(CityID)
