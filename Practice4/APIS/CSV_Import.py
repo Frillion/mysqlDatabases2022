@@ -36,7 +36,7 @@ class DbManager:
                     index +=1
                 except ValueError:
                     if index > 0:
-                        params = json.dumps(json_object,ensure_ascii=False)
+                        params = [json.dumps(json_object,ensure_ascii=False)]
                         self.execute_sql_procedure("insert_region",params)
                         self.execute_sql_procedure("insert_cities",params)
                         self.execute_sql_procedure("insert_json",params)

@@ -8,3 +8,4 @@ begin
     join regions r on c.RegionID = r.RegionID
     where CityName = city_name;
 end;
+
