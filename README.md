@@ -14,14 +14,14 @@
 	}]
 }
 ```
----
 ### Python Scripts
-
 The [CSV-Test](https://github.com/Frillion/mysqlDatabases2022/blob/main/Practice4/APIS/CSV-Test.py) file is the script that takes a file path to the csv fileand imports that to the database **Requires:**[CSV\_Import](https://github.com/Frillion/mysqlDatabases2022/blob/main/Practice4/APIS/CSV_Import.py)
+
 ---
 ### Database Diagram
 
 The diagram for the database is in database_diagram(1).drawio wich can be opened using this [website](https://app.diagrams.net)
+
 ---
 ### Mysql Files
 
