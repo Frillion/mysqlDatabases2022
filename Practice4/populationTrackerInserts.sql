@@ -4,8 +4,10 @@ delimiter $$
 drop procedure if exists insert_region$$
 create procedure insert_region(j_data json)
 begin
-	insert into regions(RegionName)
-    values(json_unquote((select json_extract(json_keys(j_data),'$[0]'))));
+	if json_unquote((select json_extract(json_keys(j_data),'$[0]'))) not in (select RegionName from regions)
+	then insert into regions(RegionName)
+		 values(json_unquote((select json_extract(json_keys(j_data),'$[0]'))));
+    end if;
     select json_object('table', 'Regions', 'rows_inserted', row_count()) as result;
 end$$
 
@@ -21,10 +23,10 @@ begin
 		 values(region_id,j_data);
 	else
 		update jsonfiles
-        set JsonData = json_merge_patch(entire_object,j_data)
-        where RegionID = rergion_id;
+        set JsonData = json_merge(entire_object,j_data)
+        where RegionID = region_id;
 	end if;
-end;
+end$$
 
 drop procedure if exists insert_cities$$
 create procedure insert_cities(j_data json)
@@ -76,4 +78,4 @@ begin
     end loop;
     select json_object('table', 'Population', 'rows_inserted', row_count()) as result;
 end$$
-/*call insert_population(json_object('ækfædasjfl',json_array(json_object('city_id','0004','city_name','hlahnsgv','city_population',json_array(json_object('record_date','20/8/2020','population',132))),json_object('city_id','0005','city_name','hlahnsgv','city_population',json_array(json_object('record_date','20/8/2020','population',132))))));*/
+/*call insert_json(json_object('ækfædasjfl',json_array(json_object('city_id','0004','city_name','hlahnsgv','city_population',json_array(json_object('record_date','20/8/2020','population',132))),json_object('city_id','0005','city_name','hlahnsgv','city_population',json_array(json_object('record_date','20/8/2023','population',200))))));*/
