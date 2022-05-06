@@ -27,4 +27,4 @@ The diagram for the database is in database_diagram(1).drawio which can be opene
 
 populationTracker creates the database and all its tables<br>
 populationtracker inserts holds all the stored procedures that are required to insert the json data it gets from csv-test/csv\_Import<br>
-population\_tracker\_operations holds the stored procedures for all data that the database should return **Still Under Development**
+population\_tracker\_operations holds the stored procedures for all data that the database should return
