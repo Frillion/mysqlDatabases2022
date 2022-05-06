@@ -1,6 +1,6 @@
 # Database Class 2022
 ## Practice 4 Notes
-**Mann\_Fjöldi\_a\_islandi.csv Has Been modified slightly to make it easier to read from python and construct the json object that is shown below**
+<b>Mann\_Fjöldi\_a\_islandi.csv Has Been modified slightly to make it easier to read from python and construct the json object that is shown below</b>
 
 ```json
 {
@@ -28,3 +28,8 @@ The diagram for the database is in database_diagram(1).drawio which can be opene
 populationTracker creates the database and all its tables<br>
 populationtracker inserts holds all the stored procedures that are required to insert the json data it gets from csv-test/csv\_Import<br>
 population\_tracker\_operations holds the stored procedures for all data that the database should return
+
+## Practice 5
+### Relational Diagram
+![Database Relationship Diagram](https://github.com/Frillion/mysqlDatabases2022/blob/main/Practice5/DatabaseRelationalMap.png)
+This is the relationship diagram for a database meant to be a question and answer site akin to stack overflow.
