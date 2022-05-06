@@ -31,5 +31,5 @@ population\_tracker\_operations holds the stored procedures for all data that th
 
 ## Practice 5
 ### Relational Diagram
-![Database Relationship Diagram](https://github.com/Frillion/mysqlDatabases2022/blob/main/Practice5/DatabaseRelationalMap.png)
+![Database Relationship Diagram](https://github.com/Frillion/mysqlDatabases2022/blob/main/Practice5/DatabaseRelationalDiagram.png)
 This is the relationship diagram for a database meant to be a question and answer site akin to stack overflow.
