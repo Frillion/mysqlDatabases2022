@@ -20,7 +20,7 @@ The [CSV-Test](https://github.com/Frillion/mysqlDatabases2022/blob/main/Practice
 ---
 ### Database Diagram
 
-The diagram for the database is in database_diagram(1).drawio which can be opened using this [website](https://app.diagrams.net)
+![Practice4 database diagram](https://github.com/Frillion/mysqlDatabases2022/tree/main/Practice4/database_diagram.png)
 
 ---
 ### Mysql Files
