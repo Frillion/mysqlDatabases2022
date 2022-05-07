@@ -20,7 +20,7 @@ The [CSV-Test](https://github.com/Frillion/mysqlDatabases2022/blob/main/Practice
 ---
 ### Database Diagram
 
-![Practice4 database diagram](https://github.com/Frillion/mysqlDatabases2022/tree/main/Practice4/database_diagram.png)
+![Practice4 database diagram](Practice4/database_diagram.png)
 
 ---
 ### Mysql Files
