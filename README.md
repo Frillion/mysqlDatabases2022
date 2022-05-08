@@ -33,3 +33,7 @@ population\_tracker\_operations holds the stored procedures for all data that th
 ### Relational Diagram
 ![Database Relationship Diagram](https://github.com/Frillion/mysqlDatabases2022/blob/main/Practice5/DatabaseRelationalDiagram.png)
 This is the relationship diagram for a database meant to be a question and answer site akin to stack overflow.
+
+### MySQL Files
+The name that i have decided on for the database is stack_definitively_not_overflowing cause as you might know i am very original \*cough\*\*cough\*<br>
+Therefore the file containing the creation of the database is named as such.
