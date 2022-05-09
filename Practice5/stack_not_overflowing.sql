@@ -38,6 +38,7 @@ create table questions(
 	QuestionID int,
     TopicID int,
     UserID int,
+	Title varchar(100),
     Content text,
     DatePosted date,
     constraint question_pk primary key(QuestionID),
