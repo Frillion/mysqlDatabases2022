@@ -5,19 +5,19 @@ use stack_definitively_not_overFlowing;
 
 create table accessLevel(
 	AccessID int,
-    Access varchar(50),
+    Access varchar(50) UNIQUE,
     constraint access_pk primary key(accessID)
 );
 
 create table userStatuses(
 	StatusID int,
-    UserStatus varchar(50),
+    UserStatus varchar(50) UNIQUE,
     constraint status_pk primary key(StatusID)
 );
 
 create table topics(
 	TopicID int,
-    Topic varchar(75),
+    Topic varchar(75) UNIQUE,
     constraint topic_pk primary key(TopicID)
 );
 
