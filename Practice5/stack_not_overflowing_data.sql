@@ -1,5 +1,6 @@
 use stack_definitively_not_overFlowing;
 delimiter $$
+/*CREATE STATEMENTS*/
 drop procedure if exists Create_User$$
 create procedure Create_User(j_data json)
 begin
@@ -30,7 +31,7 @@ begin
         j_data->>"$.answer_id",
         j_data->>"$.question_id",
         (select UserID from users where UserName = j_data->>"$.poster"),
-        j_data->>"$.Contents",
+        j_data->>"$.contents",
         now()
    );
 end$$
@@ -80,25 +81,18 @@ begin
    );
 end$$
 
-
+/*READ STATEMENTS*/
 drop procedure if exists Get_User$$
 create procedure Get_User(user_name varchar(75))
 begin
     select json_object(
-        "user_id",
-        (select UserID from users where UserName = user_name),
-        "username",
-        user_name,
-        "status",
-        (select UserStatus from userstatuses where StatusID = (select StatusID from users where UserName = user_name)),
-        "user_level",
-        (select Access from accessLevel where AccessID = (select AccessID from users where UserName = user_name)),
-        "hashed_password",
-        (select userPassword from users where UserName = user_name),
-        "email",
-        (select email from users where UserName = user_name),
-        "last_logon_date",
-        (select LastLogon from users where UserName = user_name)
+        "user_id",(select UserID from users where UserName = user_name),
+        "username",user_name,
+        "status",(select UserStatus from userstatuses where StatusID = (select StatusID from users where UserName = user_name)),
+        "user_level",(select Access from accessLevel where AccessID = (select AccessID from users where UserName = user_name)),
+        "hashed_password",(select userPassword from users where UserName = user_name),
+        "email",(select email from users where UserName = user_name),
+        "last_logon_date",(select LastLogon from users where UserName = user_name)
         );
 end$$
 
@@ -106,105 +100,161 @@ drop procedure if exists Get_Topic$$
 create procedure Get_Topic(topic_id int)
 begin
     select json_object(
-        "topic_id",
-        topic_id,
-        "topic",
-        (select Topic from topics where TopicID = topic_id)
+        "topic_id",topic_id,
+        "topic",(select Topic from topics where TopicID = topic_id)
         );
 end$$
 
 drop procedure if exists Get_Question_Answer$$
 create procedure Get_Question_Answer(question_id int)
 begin
-    declare querry_length int;
-    
-    declare result json;
-    select COUNT(*) from answers into querry_length where QuestionID = question_id;
-    set result = json_array();
-    answer_loop:loop
-        
-        set result = json_append(result,json_object(
-            "question_id",
-            question_id,
-            "answer_id",
-            (select AnswerID from answers where QuestionID = question_id limit 1)
-        ));
-    end loop anwer_loop;
+    select json_arrayagg(json_object(
+        "answer_id",AnswerID,
+        "question_id",QuestionID,
+        "contents",Content,
+        "date_posted",DatePosted
+        )) from answers where QuestionID = question_id;
 end$$
 
 drop procedure if exists Get_Access$$
-create procedure Get_Access(j_data json)
+create procedure Get_Access(access_id int)
 begin
+    select json_object(
+        "access_id",
+        access_id,
+        "access_level",
+        (select Access from accessLevel where AccessID = access_id)
+    );
 end$$
+
 drop procedure if exists Get_Question$$
-create procedure Get_Question(j_data json)
+create procedure Get_Questions()
 begin
+    select json_arrayagg(json_object(
+        "question_id",QuestionID,
+        "topic",(select Topic from topics where topics.TopicID = questions.TopicID),
+        "poster",(select UserName from users where users.UserID = questions.UserID),
+        "question",Title,
+        "description",Content,
+        "date_posted",DatePosted
+    )) from questions;
 end$$
+
 drop procedure if exists Get_Rating$$
-create procedure Get_Ratings(j_data json)
+create procedure Get_Ratings(answer_id int)
 begin
+    select json_arrayagg(json_object(
+        "rater_id",UserID,
+        "answer_id",AnswerID,
+        "rating",Rating
+    )) from ratings where AnswerID = answer_id;
 end$$
+
 drop procedure if exists Get_Status$$
-create procedure Get_Status(j_data json)
+create procedure Get_Status(status_id)
 begin
+    select json_object(
+        "status_id",status_id,
+        "user_status",(select UserStatus from userstatuses where StatusID = status_id)
+    );
 end$$
 
-
-drop procedure if exists Update_User$$
-create procedure Update_User(j_data json)
+/*UPDATE STATEMENTS*/
+drop procedure if exists Update_User_All$$
+create procedure Update_User_All(j_data json)
 begin
-end$$
-drop procedure if exists Update_Topic$$
-create procedure Update_Topic(j_data json)
-begin
-end$$
-drop procedure if exists Update_Answer$$
-create procedure Update_Answer(j_data json)
-begin
-end$$
-drop procedure if exists Update_Access$$
-create procedure Update_Access(j_data json)
-begin
-end$$
-drop procedure if exists Update_Question$$
-create procedure Update_Question(j_data json)
-begin
-end$$
-drop procedure if exists Update_Rating$$
-create procedure Update_Ratings(j_data json)
-begin
-end$$
-drop procedure if exists Update_Status$$
-create procedure Update_Status(j_data json)
-begin
+    update users
+    set StatusID = (select StatusID from userstatuses where UserStatus = j_data->>"$.status"),
+    set AccessID = (select AccessID from accessLevel where Access = j_data->>"$.access_level"),
+    set UserName = j_data->>"$.username",
+    set userPassword = j_data->>"$.password",
+    set email = j_data->>"$.email"
+    where UserID = j_data->>"$.user_id"
 end$$
 
+drop procedure if exists Update_Topic_All$$
+create procedure Update_Topic_All(j_data json)
+begin
+    update topics
+    set Topic = j_data->>"$.topic"
+    where TopicID = j_data->>"$.topic_id"
+end$$
 
+drop procedure if exists Update_Answer_All$$
+create procedure Update_Answer_All(j_data json)
+begin
+    update answers
+    set Content = j_data->>"$.contents"
+    where AnswerID = j_data->>"$.answer_id"
+end$$
+
+drop procedure if exists Update_Access_All$$
+create procedure Update_Access_All(j_data json)
+begin
+    update accessLevel
+    set Access = j_data->>"$.access_level"
+    where AccessID = j_data->>"$.access_id"
+end$$
+
+drop procedure if exists Update_Question_All$$
+create procedure Update_Question_All(j_data json)
+begin
+    update questions
+    set TopicID = (select TopicID from topics where Topic = j_data->>"$.topic"),
+    set Title = j_data->>"$.question",
+    set Content = j_data->>"$.desription"
+    where QuestionID = j_data->>"$.question_id"
+end$$
+
+drop procedure if exists Update_Rating_All$$
+create procedure Update_Ratings_All(j_data json)
+begin
+    update ratings
+    set Rating = j_data->>"$.rating"
+    where UserID = j_data->>"$.user_id" and AnswerID = j_data->>"$.answer_id";
+end$$
+
+drop procedure if exists Update_Status_All$$
+create procedure Update_Status_All(j_data json)
+begin
+    update userstatuses
+    set UserStatus = j_data->>"$.status"
+    where StatusID = j_data->>"$.status_id"
+end$$
+
+/*DELETE STATEMENTS*/
 drop procedure if exists Delete_User$$
-create procedure Delete_User(j_data json)
+create procedure Delete_User(user_id int)
 begin
+    delete from users where UserID = user_id;
 end$$
+
 drop procedure if exists Delete_Topic$$
-create procedure Delete_Topic(j_data json)
+create procedure Delete_Topic(topic_id int)
 begin
+    delete from topics where TopicID = topic_id;
 end$$
+
 drop procedure if exists Delete_Answer$$
-create procedure Delete_Answer(j_data json)
+create procedure Delete_Answer(answer_id int)
 begin
+    delete from answers where AnswerID = answer_id;
 end$$
+
 drop procedure if exists Delete_Access$$
-create procedure Delete_Access(j_data json)
+create procedure Delete_Access(access_id int)
 begin
+    delete from accessLevel where AccessID = access_id;
 end$$
+
 drop procedure if exists Delete_Question$$
-create procedure Delete_Question(j_data json)
+create procedure Delete_Question(question_id int)
 begin
+    delete from questions where QuestionID = question_id;
 end$$
-drop procedure if exists Delete_Rating$$
-create procedure Delete_Ratings(j_data json)
-begin
-end$$
+
 drop procedure if exists Delete_Status$$
-create procedure Delete_Status(j_data json)
+create procedure Delete_Status(status_id int)
 begin
+    delete from userstatuses where StatusID = status_id
 end$$
