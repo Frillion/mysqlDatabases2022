@@ -36,4 +36,6 @@ This is the relationship diagram for a database meant to be a question and answe
 
 ### MySQL Files
 The name that i have decided on for the database is stack_definitively_not_overflowing cause as you might know i am very original \*cough\*\*cough\*<br>
-Therefore the file containing the creation of the database is named as such.
+Therefore the file containing the creation of the database is named as such.<br>
+The file containing all the CRUD operations is called stack_not_overflowing_data.sql(**This Includes "Posting" Questions And Answers**)<br>
+stack_not_overflowing_special_operations.sql has all other procedures needed by the database

@@ -58,7 +58,7 @@ begin
    );
 end$$
 
-drop procedure if exists Create_Rating$$
+drop procedure if exists Create_Ratings$$
 create procedure Create_Ratings(j_data json)
 begin
     /*Getting the right AnswerID and UserID will be left up to the app developer
@@ -127,7 +127,7 @@ begin
     );
 end$$
 
-drop procedure if exists Get_Question$$
+drop procedure if exists Get_Questions$$
 create procedure Get_Questions()
 begin
     select json_arrayagg(json_object(
@@ -140,7 +140,7 @@ begin
     )) from questions;
 end$$
 
-drop procedure if exists Get_Rating$$
+drop procedure if exists Get_Ratings$$
 create procedure Get_Ratings(answer_id int)
 begin
     select json_arrayagg(json_object(
@@ -151,7 +151,7 @@ begin
 end$$
 
 drop procedure if exists Get_Status$$
-create procedure Get_Status(status_id)
+create procedure Get_Status(status_id int)
 begin
     select json_object(
         "status_id",status_id,
@@ -165,11 +165,11 @@ create procedure Update_User_All(j_data json)
 begin
     update users
     set StatusID = (select StatusID from userstatuses where UserStatus = j_data->>"$.status"),
-    set AccessID = (select AccessID from accessLevel where Access = j_data->>"$.access_level"),
-    set UserName = j_data->>"$.username",
-    set userPassword = j_data->>"$.password",
-    set email = j_data->>"$.email"
-    where UserID = j_data->>"$.user_id"
+        AccessID = (select AccessID from accessLevel where Access = j_data->>"$.access_level"),
+        UserName = j_data->>"$.username",
+        userPassword = j_data->>"$.password",
+        email = j_data->>"$.email"
+    where UserID = j_data->>"$.user_id";
 end$$
 
 drop procedure if exists Update_Topic_All$$
@@ -177,7 +177,7 @@ create procedure Update_Topic_All(j_data json)
 begin
     update topics
     set Topic = j_data->>"$.topic"
-    where TopicID = j_data->>"$.topic_id"
+    where TopicID = j_data->>"$.topic_id";
 end$$
 
 drop procedure if exists Update_Answer_All$$
@@ -185,7 +185,7 @@ create procedure Update_Answer_All(j_data json)
 begin
     update answers
     set Content = j_data->>"$.contents"
-    where AnswerID = j_data->>"$.answer_id"
+    where AnswerID = j_data->>"$.answer_id";
 end$$
 
 drop procedure if exists Update_Access_All$$
@@ -193,7 +193,7 @@ create procedure Update_Access_All(j_data json)
 begin
     update accessLevel
     set Access = j_data->>"$.access_level"
-    where AccessID = j_data->>"$.access_id"
+    where AccessID = j_data->>"$.access_id";
 end$$
 
 drop procedure if exists Update_Question_All$$
@@ -201,13 +201,13 @@ create procedure Update_Question_All(j_data json)
 begin
     update questions
     set TopicID = (select TopicID from topics where Topic = j_data->>"$.topic"),
-    set Title = j_data->>"$.question",
-    set Content = j_data->>"$.desription"
-    where QuestionID = j_data->>"$.question_id"
+        Title = j_data->>"$.question",
+        Content = j_data->>"$.desription"
+    where QuestionID = j_data->>"$.question_id";
 end$$
 
 drop procedure if exists Update_Rating_All$$
-create procedure Update_Ratings_All(j_data json)
+create procedure Update_Rating_All(j_data json)
 begin
     update ratings
     set Rating = j_data->>"$.rating"
@@ -219,7 +219,7 @@ create procedure Update_Status_All(j_data json)
 begin
     update userstatuses
     set UserStatus = j_data->>"$.status"
-    where StatusID = j_data->>"$.status_id"
+    where StatusID = j_data->>"$.status_id";
 end$$
 
 /*DELETE STATEMENTS*/
@@ -256,5 +256,5 @@ end$$
 drop procedure if exists Delete_Status$$
 create procedure Delete_Status(status_id int)
 begin
-    delete from userstatuses where StatusID = status_id
+    delete from userstatuses where StatusID = status_id;
 end$$
