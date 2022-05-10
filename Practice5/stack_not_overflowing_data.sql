@@ -27,14 +27,19 @@ end$$
 drop procedure if exists Create_Answer$$
 create procedure Create_Answer(j_data json)
 begin
-   INSERT INTO answers ( AnswerID,QuestionID,UserID,Content,DatePosted ) VALUES(
-        j_data->>"$.answer_id",
-        j_data->>"$.question_id",
-        (select UserID from users where UserName = j_data->>"$.poster"),
-        j_data->>"$.contents",
-        now()
-   );
+    declare user_status varchar(50);
+    select UserStatus into user_status from userstatuses where StatusID=(select StatusID from users where UserID = j_data->>"$.user_id");
+    if strcmp(user_status,"Active")
+    then INSERT INTO answers ( AnswerID,QuestionID,UserID,Content,DatePosted ) VALUES(
+         j_data->>"$.answer_id",
+         j_data->>"$.question_id",
+         (select UserID from users where UserName = j_data->>"$.poster"),
+         j_data->>"$.contents",
+         now()
+    );
+    end if;
 end$$
+
 
 drop procedure if exists Create_Access$$
 create procedure Create_Access(j_data json)
@@ -48,14 +53,18 @@ end$$
 drop procedure if exists Create_Question$$
 create procedure Create_Question(j_data json)
 begin
-   INSERT INTO questions ( QuestionID,TopicID,UserID,Title,Content,DatePosted ) VALUES(
-        j_data->>"$.question_id",
-        (select TopicID from topics where Topic = j_data->>"$.topic"),
-        (select UserID from users where UserName = j_data->>"$.poster"),
-        j_data->>"$.title",
-        j_data->>"$.description",
-        now()
-   );
+    declare user_status varchar(50);
+    select UserStatus into user_status from userstatuses where StatusID=(select StatusID from users where UserID = j_data->>"$.user_id");
+    if strcmp(user_status,"Active")
+    then INSERT INTO questions ( QuestionID,TopicID,UserID,Title,Content,DatePosted ) VALUES(
+         j_data->>"$.question_id",
+         (select TopicID from topics where Topic = j_data->>"$.topic"),
+         (select UserID from users where UserName = j_data->>"$.poster"),
+         j_data->>"$.title",
+         j_data->>"$.description",
+         now()
+    );
+    end if;
 end$$
 
 drop procedure if exists Create_Ratings$$
@@ -89,11 +98,29 @@ begin
         "user_id",(select UserID from users where UserName = user_name),
         "username",user_name,
         "status",(select UserStatus from userstatuses where StatusID = (select StatusID from users where UserName = user_name)),
-        "user_level",(select Access from accessLevel where AccessID = (select AccessID from users where UserName = user_name)),
+        "user_type",(select Access from accessLevel where AccessID = (select AccessID from users where UserName = user_name)),
         "hashed_password",(select userPassword from users where UserName = user_name),
         "email",(select email from users where UserName = user_name),
         "last_logon_date",(select LastLogon from users where UserName = user_name)
         );
+end$$
+
+drop procedure if exists Get_Users$$
+create procedure Get_Users()
+begin
+    select json_arrayagg(json_object(
+        "user_id",UserID,
+        "username",UserName,
+        "status",UserStatus,
+        "user_type",Access,
+        "hashed_password",userPassword,
+        "email",email,
+        "last_logon_date", LastLogon
+        ))from users u
+          join userstatuses us
+          on u.StatusID = us.StatusID
+          join accessLevel acl
+          on u.AccessID = acl.AccessID;
 end$$
 
 drop procedure if exists Get_Topic$$
@@ -105,8 +132,17 @@ begin
         );
 end$$
 
-drop procedure if exists Get_Question_Answer$$
-create procedure Get_Question_Answer(question_id int)
+drop procedure if exists Get_Topics$$
+create procedure Get_Topics()
+begin
+    select json_arrayagg(json_object(
+        "topic_id",TopicID,
+        "topic",Topic
+        )) from topics;
+end$$
+
+drop procedure if exists Get_Question_Answers$$
+create procedure Get_Question_Answers(question_id int)
 begin
     select json_arrayagg(json_object(
         "answer_id",AnswerID,
@@ -120,11 +156,18 @@ drop procedure if exists Get_Access$$
 create procedure Get_Access(access_id int)
 begin
     select json_object(
-        "access_id",
-        access_id,
-        "access_level",
-        (select Access from accessLevel where AccessID = access_id)
+        "access_id",access_id,
+        "access_level",(select Access from accessLevel where AccessID = access_id)
     );
+end$$
+
+drop procedure if exists Get_Access_All$$
+create procedure Get_Access_All(access_id int)
+begin
+    select json_arrayagg(json_object(
+        "access_id",AccessID,
+        "access_level",Access
+    ))from accessLevel;
 end$$
 
 drop procedure if exists Get_Questions$$
@@ -157,6 +200,15 @@ begin
         "status_id",status_id,
         "user_status",(select UserStatus from userstatuses where StatusID = status_id)
     );
+end$$
+
+drop procedure if exists Get_Statuses$$
+create procedure Get_Statuses(status_id int)
+begin
+    select json_arrayagg(json_object(
+        "status_id",StatusID,
+        "user_status",UserStatus
+    ))from userstatuses;
 end$$
 
 /*UPDATE STATEMENTS*/
@@ -226,7 +278,15 @@ end$$
 drop procedure if exists Delete_User$$
 create procedure Delete_User(user_id int)
 begin
-    delete from users where UserID = user_id;
+    if !HasPosted(user_id)
+    then delete from users where UserID = user_id;
+    else
+        update users
+        set status_id = (select StatusID from userstatuses where UserStatus = "Terminated"),
+        email = Null,
+        userPassword = Null
+        where UserID = user_id;
+    end if;
 end$$
 
 drop procedure if exists Delete_Topic$$
