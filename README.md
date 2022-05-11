@@ -41,6 +41,7 @@ The file containing all the CRUD operations is called stack_not_overflowing_data
 stack_not_overflowing_special_operations.sql has all other procedures needed by the database
 
 ### Json Objects
+**CREATE**
 **Create User Input**
 ```json
 {
@@ -67,7 +68,7 @@ stack_not_overflowing_special_operations.sql has all other procedures needed by 
 	"poster":"Julian Oliver",
 	"answer_id":"y1Geya4=",
 	"question_id":"tY9Gyio=",
-	"contents":"Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus vitae aliquet sem. Quisque porta eleifend metus, non convallis turpis volutpat sit amet. 
+	"contents":"Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus vitae aliquet sem. Quisque porta eleifend metus, non convallis turpis volutpat sit amet.\
 		    Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos."
 }
 ```
@@ -85,9 +86,9 @@ stack_not_overflowing_special_operations.sql has all other procedures needed by 
 	"question_id":"gfVyuyw=",
 	"topic":"Programming",
 	"title":"Aliquam erat volutpat. Suspendisse lorem arcu, blandit non diam eget, eleifend aliquam purus. Quisque nec leo a dolor auctor auctor quis vehicula massa.",
-	"description":"Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed turpis felis, luctus quis odio sed, rhoncus egestas nibh.
-		       Quisque tempus, ante ut egestas finibus, ante risus ullamcorper metus, porttitor congue ipsum purus eu neque. Ut massa metus, suscipit et tincidunt non, gravida ac lacus. Fusce in fringilla mi, ut tincidunt nunc.
-		       Praesent ornare semper ipsum a luctus.Suspendisse potenti.Quisque laoreet pretium semper. Curabitur convallis in mi vel sodales. 
+	"description":"Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed turpis felis, luctus quis odio sed, rhoncus egestas nibh.\
+		       Quisque tempus, ante ut egestas finibus, ante risus ullamcorper metus, porttitor congue ipsum purus eu neque. Ut massa metus, suscipit et tincidunt non, gravida ac lacus. Fusce in fringilla mi, ut tincidunt nunc.\
+		       Praesent ornare semper ipsum a luctus.Suspendisse potenti.Quisque laoreet pretium semper. Curabitur convallis in mi vel sodales. \
 		       Nam massa turpis, porta sit amet sem nec, iaculis ultricies nulla. Nam et varius enim. Praesent volutpat malesuada nisi, a ultricies risus aliquet non."
 }
 ```
@@ -108,6 +109,8 @@ stack_not_overflowing_special_operations.sql has all other procedures needed by 
 	"user_status":"Active"
 }
 ```
+**READ**
+*note: getting all rows just returns an array of these objects*
 **Get User Output**
 ```json
 {
@@ -120,4 +123,71 @@ stack_not_overflowing_special_operations.sql has all other procedures needed by 
 	"last_logon_date":"2022/05/01"
 }
 ```
+**Get Topic Output**
+```json
+{
+	"topic_id":0,
+	"topic":"Programming"
+}
+```
+**Get Question Answers Output**
+*note:  Gets all answers of a given question so its an array of this object*
+```json
+{
+	"answer_id":"y1Geya4=",
+	"question_id":"gfVyuyw=",
+	"contents":"Lorem ipsum dolor sit amet, consectetur adipiscing elit. Praesent sed tempus metus. Nunc tempus condimentum euismod.\
+		    Fusce blandit vel eros in ultricies. Aliquam placerat dapibus lorem nec vulputate.\
+		    Praesent fermentum elit arcu, quis tincidunt velit sodales at. Cras ac convallis justo.\
+		    Fusce rhoncus libero quis accumsan ornare. Mauris eget facilisis nisl."
+	"date_posted":"2022/03/01"
+}
+```
+**Get Access Output**
+```json
+{
+	"access_id":0,
+	"access_id":"Admin"
+}
+```
+**Get Questions Output**
+```json
+{
+	"question_id":"gfVyuyw=",
+	"topic":"Programming",
+	"poster":"Julian Oliver",
+	"question":"Nunc accumsan ligula ac luctus tempus. Sed euismod accumsan gravida. Sed convallis ipsum eget nibh euismod commodo.\
+		    Ut bibendum, risus tempus mattis accumsan, massa leo tincidunt velit, quis euismod nulla ligula ac lectus.",
+	"description":"Mauris hendrerit ac velit ac porta. Cras ultricies, urna ut luctus porta, massa metus feugiat ante,\
+		       consectetur lacinia ante libero sit amet tortor. Pellentesque ut nisi lacus. Mauris pellentesque nisi massa,\
+		       ut volutpat justo dignissim vitae. In hac habitasse platea dictumst. Duis efficitur sapien sed rutrum condimentum.\
+		       Morbi imperdiet hendrerit rutrum. Vivamus elit velit, mollis eu mattis eu, blandit et diam",
+	"date_posted":"2022/01/15"
+}
+```
+**Get Ratings Output**
+*note: Gets all ratings for a given answer*
+```json
+	"rater_id":"hDap6dc=",
+	"answer_id":"y1Geya4=",
+	"rating":8
+```
+**Get Status Output**
+```json
+{
+	"status_id":0,
+	"user_status":"Active"
+}
+```
+**Update User Input**
+```json
+{
+	"user_id":"y1Geya4=",
+	"username":"(new_username)",
+	"password":"(new_password)",
+	"email":"(new_email)"
+}
+```
+
+
 
