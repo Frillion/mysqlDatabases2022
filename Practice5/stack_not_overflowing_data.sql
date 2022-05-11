@@ -254,7 +254,7 @@ begin
     update questions
     set TopicID = (select TopicID from topics where Topic = j_data->>"$.topic"),
         Title = j_data->>"$.question",
-        Content = j_data->>"$.desription"
+        Content = j_data->>"$.description"
     where QuestionID = j_data->>"$.question_id";
 end$$
 

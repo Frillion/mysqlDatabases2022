@@ -53,7 +53,7 @@ stack_not_overflowing_special_operations.sql has all other procedures needed by 
 	"email":"julian.oliver@example.com"
 }
 ```
-*note: the password would be encrypted*
+*note: the password would be encrypted*<br>
 
 **Create Topic Input**
 ```json
@@ -96,7 +96,7 @@ stack_not_overflowing_special_operations.sql has all other procedures needed by 
 	"rating":8
 }
 ```
-*note: inputing a rating of the users own answer will not work*
+*note: inputing a rating of the users own answer will not work*<br>
 
 **Create Status Input**
 ```json
@@ -105,8 +105,8 @@ stack_not_overflowing_special_operations.sql has all other procedures needed by 
 	"user_status":"Active"
 }
 ```
-**READ**
-*note: getting all rows just returns an array of these objects*
+**READ**<br>
+*note: getting all rows just returns an array of these objects*<br>
 **Get User Output**
 ```json
 {
@@ -126,7 +126,7 @@ stack_not_overflowing_special_operations.sql has all other procedures needed by 
 	"topic":"Programming"
 }
 ```
-**Get Question Answers Output**
+**Get Question Answers Output**<br>
 *note:  Gets all answers of a given question so its an array of this object*
 ```json
 {
@@ -154,7 +154,7 @@ stack_not_overflowing_special_operations.sql has all other procedures needed by 
 	"date_posted":"2022/01/15"
 }
 ```
-**Get Ratings Output**
+**Get Ratings Output**<br>
 *note: Gets all ratings for a given answer*
 ```json
 {
@@ -170,15 +170,59 @@ stack_not_overflowing_special_operations.sql has all other procedures needed by 
 	"user_status":"Active"
 }
 ```
+**UPDATE**<br>
 **Update User Input**
 ```json
 {
-	"user_id":"y1Geya4=",
+	"user_id":"hDap6dc=",
 	"username":"(new_username)",
 	"password":"(new_password)",
 	"email":"(new_email)"
 }
 ```
-
-
+**Update Topic Input**
+```json
+{
+	"topic_id":0,
+	"topic":"(new_topic)"
+}
+```
+**Update Answer Input**
+```json
+{
+	"answer_id":"y1Geya4=",
+	"contents":"(updated_answer)"
+}
+```
+**Update Access Input**
+```json
+{
+	"access_id":0,
+	"access_level":"(new_user_type)"
+}
+```
+**Update Question Input**
+```json
+{
+	"question_id":"gfVyuyw=",
+	"topic":"(new_topic)",
+	"question":"(new_question)",
+	"description":"(new_description)
+}
+```
+**Update Rating**
+```json
+{
+	"user_id":"hDap6dc=",
+	"answer_id":"y1Geya4=",
+	"rating":"(new_rating)"
+}
+```
+**Update Status**
+```json
+{
+	"status_id":0,
+	"status":"(new_status)"
+}
+```
 
