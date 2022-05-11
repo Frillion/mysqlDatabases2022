@@ -9,7 +9,7 @@ begin
         (select StatusID from userstatuses where UserStatus = j_data->>"$.status"),
         (select AccessID from accessLevel where Access = j_data->>"$.user_type"),
         j_data->>"$.username",
-        j_data->>"$.password",
+        SHA2(j_data->>"$.password",256),
         j_data->>"$.email",
         now()
    );
@@ -28,7 +28,7 @@ drop procedure if exists Create_Answer$$
 create procedure Create_Answer(j_data json)
 begin
     declare user_status varchar(50);
-    select UserStatus into user_status from userstatuses where StatusID=(select StatusID from users where UserID = j_data->>"$.user_id");
+    select UserStatus into user_status from userstatuses where StatusID=(select StatusID from users where UserID = (select UserID from users where UserName = j_data->>"$.poster"));
     if strcmp(user_status,"Active")
     then INSERT INTO answers ( AnswerID,QuestionID,UserID,Content,DatePosted ) VALUES(
          j_data->>"$.answer_id",
@@ -54,7 +54,7 @@ drop procedure if exists Create_Question$$
 create procedure Create_Question(j_data json)
 begin
     declare user_status varchar(50);
-    select UserStatus into user_status from userstatuses where StatusID=(select StatusID from users where UserID = j_data->>"$.user_id");
+    select UserStatus into user_status from userstatuses where StatusID=(select StatusID from users where UserID = (select UserID from users where UserName = j_data->>"$.poster"));
     if strcmp(user_status,"Active")
     then INSERT INTO questions ( QuestionID,TopicID,UserID,Title,Content,DatePosted ) VALUES(
          j_data->>"$.question_id",

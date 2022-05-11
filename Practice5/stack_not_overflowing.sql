@@ -22,7 +22,7 @@ create table topics(
 );
 
 create table users(
-	UserID int,
+	UserID varchar(20),
     StatusID int,
     AccessID int,
     UserName varchar(75) unique,
@@ -35,9 +35,9 @@ create table users(
 );
 
 create table questions(
-	QuestionID int,
+	QuestionID varchar(20),
     TopicID int,
-    UserID int,
+    UserID varchar(20),
 	Title varchar(100),
     Content text,
     DatePosted date,
@@ -47,9 +47,9 @@ create table questions(
 );
 
 create table answers(
-	AnswerID int,
-    QuestionID int,
-    UserID int,
+	AnswerID varchar(20),
+    QuestionID varchar(20),
+    UserID varchar(20),
     Content text,
     DatePosted date,
     constraint Answer_pk primary key(AnswerID),
@@ -59,8 +59,8 @@ create table answers(
 
 
 create table ratings(
-	UserID int,
-    AnswerID int,
+	UserID varchar(20),
+    AnswerID varchar(20),
     Rating int,
     constraint rating_pk primary key(UserID,AnswerID),
     constraint rater foreign key(UserID) references users(UserID),

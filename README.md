@@ -39,3 +39,85 @@ The name that i have decided on for the database is stack_definitively_not_overf
 Therefore the file containing the creation of the database is named as such.<br>
 The file containing all the CRUD operations is called stack_not_overflowing_data.sql(**This Includes "Posting" Questions And Answers**)<br>
 stack_not_overflowing_special_operations.sql has all other procedures needed by the database
+
+### Json Objects
+**Create User Input**
+```json
+{
+	"user_id":"hDap6dc=",
+	"status":"Active",
+	"user_type":"Beginner",
+	"username":"Julian Oliver",
+	"password":"hoover",
+	"email":"julian.oliver@example.com"
+}
+```
+*note: the password would be encrypted*
+
+**Create Topic Input**
+```json
+{
+	"topic_id":0,
+	"topic_name":"Programming"
+}
+```
+**Create Answer Input**
+```json
+{
+	"poster":"Julian Oliver",
+	"answer_id":"y1Geya4=",
+	"question_id":"tY9Gyio=",
+	"contents":"Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus vitae aliquet sem. Quisque porta eleifend metus, non convallis turpis volutpat sit amet. 
+		    Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos."
+}
+```
+**Create Access Input**
+```json
+{
+	"access_id":0,
+	"access_level":"Admin"
+}
+```
+**Create Question Input**
+```json
+{
+	"poster":"Julian Oliver",
+	"question_id":"gfVyuyw=",
+	"topic":"Programming",
+	"title":"Aliquam erat volutpat. Suspendisse lorem arcu, blandit non diam eget, eleifend aliquam purus. Quisque nec leo a dolor auctor auctor quis vehicula massa.",
+	"description":"Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed turpis felis, luctus quis odio sed, rhoncus egestas nibh.
+		       Quisque tempus, ante ut egestas finibus, ante risus ullamcorper metus, porttitor congue ipsum purus eu neque. Ut massa metus, suscipit et tincidunt non, gravida ac lacus. Fusce in fringilla mi, ut tincidunt nunc.
+		       Praesent ornare semper ipsum a luctus.Suspendisse potenti.Quisque laoreet pretium semper. Curabitur convallis in mi vel sodales. 
+		       Nam massa turpis, porta sit amet sem nec, iaculis ultricies nulla. Nam et varius enim. Praesent volutpat malesuada nisi, a ultricies risus aliquet non."
+}
+```
+**Create Rating Input**
+```json
+{
+	"user_id":"hDap6dc=",
+	"answer_id":"y1Geya4=",
+	"rating":8
+}
+```
+*note: inputing a rating of the users own answer will not work*
+
+**Create Status Input**
+```json
+{
+	"status_id":0,
+	"user_status":"Active"
+}
+```
+**Get User Output**
+```json
+{
+	"user_id":"hDap6dc=",
+	"username":"Julian Oliver",
+	"status":"Active",
+	"user_type":"Admin",
+	"hased_password":"SHA2(hoover)",
+	"email":"julian.oliver@example.com",
+	"last_logon_date":"2022/05/01"
+}
+```
+
