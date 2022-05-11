@@ -207,7 +207,7 @@ stack_not_overflowing_special_operations.sql has all other procedures needed by 
 	"question_id":"gfVyuyw=",
 	"topic":"(new_topic)",
 	"question":"(new_question)",
-	"description":"(new_description)
+	"description":"(new_description)"
 }
 ```
 **Update Rating**
