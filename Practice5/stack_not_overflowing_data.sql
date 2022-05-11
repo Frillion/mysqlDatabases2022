@@ -4,7 +4,7 @@ delimiter $$
 drop procedure if exists Create_User$$
 create procedure Create_User(j_data json)
 begin
-   INSERT INTO users ( UserID,StatusID,AccessID,UserName,UserPassword,email,LastLogon ) VALUES(
+   INSERT IGNORE INTO users ( UserID,StatusID,AccessID,UserName,UserPassword,email,LastLogon ) VALUES(
         j_data->>"$.user_id",
         (select StatusID from userstatuses where UserStatus = j_data->>"$.status"),
         (select AccessID from accessLevel where Access = j_data->>"$.user_type"),
@@ -18,7 +18,7 @@ end$$
 drop procedure if exists Create_Topic$$
 create procedure Create_Topic(j_data json)
 begin
-    INSERT INTO  topics ( TopicID,Topic ) VALUES(
+    INSERT IGNORE INTO  topics ( TopicID,Topic ) VALUES(
          j_data->>"$.topic_id",
          j_data->>"$.topic_name"
     );
@@ -29,8 +29,8 @@ create procedure Create_Answer(j_data json)
 begin
     declare user_status varchar(50);
     select UserStatus into user_status from userstatuses where StatusID=(select StatusID from users where UserID = (select UserID from users where UserName = j_data->>"$.poster"));
-    if strcmp(user_status,"Active")
-    then INSERT INTO answers ( AnswerID,QuestionID,UserID,Content,DatePosted ) VALUES(
+    if strcmp(user_status,"Active") = 0
+    then INSERT IGNORE INTO answers ( AnswerID,QuestionID,UserID,Content,DatePosted ) VALUES(
          j_data->>"$.answer_id",
          j_data->>"$.question_id",
          (select UserID from users where UserName = j_data->>"$.poster"),
@@ -44,7 +44,7 @@ end$$
 drop procedure if exists Create_Access$$
 create procedure Create_Access(j_data json)
 begin
-   INSERT INTO  accessLevel ( AccessID,Access ) VALUES(
+   INSERT IGNORE INTO  accessLevel ( AccessID,Access ) VALUES(
         j_data->>"$.access_id",
         j_data->>"$.access_level"
    );
@@ -55,8 +55,8 @@ create procedure Create_Question(j_data json)
 begin
     declare user_status varchar(50);
     select UserStatus into user_status from userstatuses where StatusID=(select StatusID from users where UserID = (select UserID from users where UserName = j_data->>"$.poster"));
-    if strcmp(user_status,"Active")
-    then INSERT INTO questions ( QuestionID,TopicID,UserID,Title,Content,DatePosted ) VALUES(
+    if strcmp("Active",user_status) = 0
+    then INSERT IGNORE INTO questions ( QuestionID,TopicID,UserID,Title,Content,DatePosted ) VALUES(
          j_data->>"$.question_id",
          (select TopicID from topics where Topic = j_data->>"$.topic"),
          (select UserID from users where UserName = j_data->>"$.poster"),
@@ -73,7 +73,7 @@ begin
     /*Getting the right AnswerID and UserID will be left up to the app developer
       the only check is for weather or not this user is trying to rate their own answer*/
     IF j_data->>"$.user_id" not in (SELECT UserID FROM answers where AnswerID = j_data->>"$.answer_id")
-    Then INSERT INTO ratings ( UserID,AnswerID,Rating ) VALUES(
+    Then INSERT IGNORE INTO ratings ( UserID,AnswerID,Rating ) VALUES(
         j_data->>"$.user_id",
         j_data->>"$.answer_id",
         j_data->>"$.rating"
@@ -84,7 +84,7 @@ end$$
 drop procedure if exists Create_Status$$
 create procedure Create_Status(j_data json)
 begin
-   INSERT INTO userstatuses ( StatusID,UserStatus ) VALUES(
+   INSERT IGNORE INTO userstatuses ( StatusID,UserStatus ) VALUES(
         j_data->>"$.status_id",
         j_data->>"$.user_status"
    );
@@ -162,7 +162,7 @@ begin
 end$$
 
 drop procedure if exists Get_Access_All$$
-create procedure Get_Access_All(access_id int)
+create procedure Get_Access_All()
 begin
     select json_arrayagg(json_object(
         "access_id",AccessID,
@@ -203,7 +203,7 @@ begin
 end$$
 
 drop procedure if exists Get_Statuses$$
-create procedure Get_Statuses(status_id int)
+create procedure Get_Statuses()
 begin
     select json_arrayagg(json_object(
         "status_id",StatusID,
@@ -215,7 +215,7 @@ end$$
 drop procedure if exists Update_User_All$$
 create procedure Update_User_All(j_data json)
 begin
-    update users
+    update ignore users
     set StatusID = (select StatusID from userstatuses where UserStatus = j_data->>"$.status"),
         AccessID = (select AccessID from accessLevel where Access = j_data->>"$.access_level"),
         UserName = j_data->>"$.username",
@@ -227,7 +227,7 @@ end$$
 drop procedure if exists Update_Topic_All$$
 create procedure Update_Topic_All(j_data json)
 begin
-    update topics
+    update ignore topics
     set Topic = j_data->>"$.topic"
     where TopicID = j_data->>"$.topic_id";
 end$$
@@ -235,7 +235,7 @@ end$$
 drop procedure if exists Update_Answer_All$$
 create procedure Update_Answer_All(j_data json)
 begin
-    update answers
+    update ignore answers
     set Content = j_data->>"$.contents"
     where AnswerID = j_data->>"$.answer_id";
 end$$
@@ -243,7 +243,7 @@ end$$
 drop procedure if exists Update_Access_All$$
 create procedure Update_Access_All(j_data json)
 begin
-    update accessLevel
+    update ignore accessLevel
     set Access = j_data->>"$.access_level"
     where AccessID = j_data->>"$.access_id";
 end$$
@@ -251,7 +251,7 @@ end$$
 drop procedure if exists Update_Question_All$$
 create procedure Update_Question_All(j_data json)
 begin
-    update questions
+    update ignore questions
     set TopicID = (select TopicID from topics where Topic = j_data->>"$.topic"),
         Title = j_data->>"$.question",
         Content = j_data->>"$.description"
@@ -261,7 +261,7 @@ end$$
 drop procedure if exists Update_Rating_All$$
 create procedure Update_Rating_All(j_data json)
 begin
-    update ratings
+    update ignore ratings
     set Rating = j_data->>"$.rating"
     where UserID = j_data->>"$.user_id" and AnswerID = j_data->>"$.answer_id";
 end$$
@@ -269,7 +269,7 @@ end$$
 drop procedure if exists Update_Status_All$$
 create procedure Update_Status_All(j_data json)
 begin
-    update userstatuses
+    update ignore userstatuses
     set UserStatus = j_data->>"$.status"
     where StatusID = j_data->>"$.status_id";
 end$$

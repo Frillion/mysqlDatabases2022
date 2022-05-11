@@ -80,12 +80,14 @@ begin
   end if;
 end$$
 
+drop trigger if exists rank_update$$
 create trigger rank_update
 after insert on answers for each row
 begin
   if strcmp("Beginner",(select UserStatus from userstatuses us
                         join users u on u.StatusID = us.StatusID
-                        where UserID = new.UserID))
+                        where UserID = new.UserID)) = 0
+  and Number_OF_Answers_Posted(new.UserID)+Number_OF_Questions_Posted(new.UserID) >= 20
   then update users
        set StatusID = (select StatusID from userstatuses where UserStatus = "Intermediate")
        where UserID = new.UserID;
