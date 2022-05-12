@@ -4,7 +4,7 @@ delimiter $$
 /*POSTER WILL SIGNIFY THE USER BEING ACTED UPPON 
   AND USER SIGNIFIES THE ADMIN ACTING UPPON THE POSTER*/
 drop function if exists IsAdmin$$
-create function IsAdmin(user_id int) 
+create function IsAdmin(user_id varchar(20)) 
 returns boolean deterministic
 begin
   declare admin_level char(5);
@@ -18,7 +18,7 @@ begin
 end$$
 
 drop function if exists Number_OF_Answers_Posted$$
-create function Number_OF_Answers_Posted(user_id int) 
+create function Number_OF_Answers_Posted(user_id varchar(20)) 
 returns int deterministic
 begin
   declare answer_count int;
@@ -28,7 +28,7 @@ begin
 end$$
 
 drop function if exists Number_OF_Questions_Posted$$
-create function Number_OF_Questions_Posted(user_id int) 
+create function Number_OF_Questions_Posted(user_id varchar(20)) 
 returns int deterministic
 begin
   declare question_count int;
@@ -38,7 +38,7 @@ begin
 end$$
 
 drop function if exists Avg_Rating$$
-create function Avg_Rating(answer_id int) 
+create function Avg_Rating(answer_id varchar(20)) 
 returns float deterministic
 begin
   declare avg_rating int;
@@ -50,7 +50,7 @@ begin
 end$$
 
 drop function if exists HasPosted$$
-create function HasPosted(user_id int) 
+create function HasPosted(user_id varchar(20)) 
 returns boolean deterministic
 begin
   if Number_OF_Answers_Posted(user_id) <= 0 or Number_OF_Questions_Posted(user_id) <= 0

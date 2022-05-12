@@ -142,7 +142,7 @@ begin
 end$$
 
 drop procedure if exists Get_Question_Answers$$
-create procedure Get_Question_Answers(question_id int)
+create procedure Get_Question_Answers(question_id varchar(20))
 begin
     select json_arrayagg(json_object(
         "answer_id",AnswerID,
@@ -184,7 +184,7 @@ begin
 end$$
 
 drop procedure if exists Get_Ratings$$
-create procedure Get_Ratings(answer_id int)
+create procedure Get_Ratings(answer_id varchar(20))
 begin
     select json_arrayagg(json_object(
         "rater_id",UserID,
@@ -276,7 +276,7 @@ end$$
 
 /*DELETE STATEMENTS*/
 drop procedure if exists Delete_User$$
-create procedure Delete_User(user_id int)
+create procedure Delete_User(user_id varchar(20))
 begin
     if !HasPosted(user_id)
     then delete from users where UserID = user_id;
@@ -296,7 +296,7 @@ begin
 end$$
 
 drop procedure if exists Delete_Answer$$
-create procedure Delete_Answer(answer_id int)
+create procedure Delete_Answer(answer_id varchar(20))
 begin
     delete from answers where AnswerID = answer_id;
 end$$
@@ -308,7 +308,7 @@ begin
 end$$
 
 drop procedure if exists Delete_Question$$
-create procedure Delete_Question(question_id int)
+create procedure Delete_Question(question_id varchar(20))
 begin
     delete from questions where QuestionID = question_id;
 end$$
