@@ -56,6 +56,7 @@ inserts a user to the users table with a json object input *see json objects bel
 }
 ```
 *note: the password would be encrypted*<br>
+
 --------
 <b>Create_Topic(json_object json)</b><br>
 inserts a topic to the topics table with a json object input *see format below*
@@ -108,6 +109,7 @@ inserts a rating from 1-10 for an answer into the ratings table with a json obje
 }
 ```
 *note: inputing a rating of the users own answer will not work*<br>
+
 --------
 <b>Create_Status(json_object json)</b><br>
 inserts a status into the status table with a json object input *see format below*
